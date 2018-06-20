@@ -13,10 +13,8 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ThemedSpinnerAdapter
 import androidx.fragment.app.Fragment
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.fragment_main.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import weesner.tax_fetcher.*
 import weesner.tax_fetcher.FederalIncomeTax.Companion.withholding
@@ -37,23 +35,18 @@ class MainActivity : AppCompatActivity() {
         // Setup spinner
         spinner.adapter = MyAdapter(
                 toolbar.context,
-                arrayOf("Section 1", "Section 2", "Section 3"))
+                arrayOf("Calculate Taxes"))
 
         spinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 // When the given dropdown item is selected, show its contents in the
                 // container view.
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                        .replace(R.id.container, PlaceholderFragment.newInstance())
                         .commit()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
         }
 
     }
@@ -121,7 +114,6 @@ class MainActivity : AppCompatActivity() {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.fragment_main, container, false)
-            rootView.textTaxes.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
 
             federalTaxes = getFederalTaxes(this.context!!, "2018")
 
@@ -184,7 +176,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         fun calculateTax() {
-            if(check == 0.0) check = 0.00000001
+            if (check == 0.0) check = 0.00000001
 
             federalTaxes.apply {
                 checkAmount = check
@@ -211,20 +203,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         companion object {
-            /**
-             * The fragment argument representing the section number for this
-             * fragment.
-             */
-            private val ARG_SECTION_NUMBER = "section_number"
-
-            /**
-             * Returns a new instance of this fragment for the given section
-             * number.
-             */
-            fun newInstance(sectionNumber: Int): PlaceholderFragment {
+            fun newInstance(): PlaceholderFragment {
                 val fragment = PlaceholderFragment()
                 val args = Bundle()
-                args.putInt(ARG_SECTION_NUMBER, sectionNumber)
                 fragment.arguments = args
                 return fragment
             }
